@@ -15,7 +15,7 @@ from jupyter_client.jsonutil import date_default
 from functools import reduce
 
 from notebook.base.handlers import (
-     APIHandler, json_errors, path_regex, notebook_extension
+     APIHandler, json_errors, path_regex
 )
 
 
@@ -163,23 +163,23 @@ class BeakerLabSessionHandler(APIHandler):
         sm = self.session_manager
         sessions = yield gen.maybe_future(sm.list_sessions())
         key_path = ["notebook", "path"]
-        full_name = path.strip('/') + '.' + notebook_extension
+        nb_name = path.strip('/')
         session_id = None
         for session in sessions:
             nb_path = self._get_from_dict(session, key_path)
-            if nb_path == full_name:
+            if nb_path == nb_name:
                 session_id = session["id"]
+        print(session_id)
         if not (session_id is None):
-            full_path = path + '.' + notebook_extension
             try:
                 yield gen.maybe_future(sm.delete_session(session_id))
-                exists = yield gen.maybe_future(self.contents_manager.file_exists(full_path))
+                exists = yield gen.maybe_future(self.contents_manager.file_exists(path))
                 if exists:
                     cm = self.contents_manager
-                    self.log.warning('delete %s', full_path)
-                    yield gen.maybe_future(cm.delete(full_path))
+                    self.log.warning('Deleting %s', path)
+                    yield gen.maybe_future(cm.delete(path))
                 else:
-                    self.log.warning('Path %s does not exist', full_path)
+                    self.log.warning('Path %s does not exist', path)
             except KeyError:
                 # the kernel was deleted but the session wasn't!
                 raise web.HTTPError(410, "Kernel deleted before session")
