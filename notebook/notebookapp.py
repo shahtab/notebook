@@ -266,6 +266,7 @@ class NotebookWebApplication(web.Application):
         handlers.extend(load_handlers('services.config.handlers'))
         handlers.extend(load_handlers('services.kernels.handlers'))
         handlers.extend(load_handlers('services.contents.handlers'))
+        handlers.extend(load_handlers('services.beakerlab.handlers'))
         handlers.extend(load_handlers('services.sessions.handlers'))
         handlers.extend(load_handlers('services.nbconvert.handlers'))
         handlers.extend(load_handlers('services.kernelspecs.handlers'))
@@ -659,7 +660,7 @@ class NotebookApp(JupyterApp):
         if not change['new']:
             self.mathjax_url = u''
 
-    base_url = Unicode('/', config=True,
+    base_url = Unicode('/jupyter', config=True,
                                help='''The base URL for the notebook server.
 
                                Leading and trailing slashes can be omitted,
