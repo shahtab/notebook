@@ -598,6 +598,7 @@ class FilesRedirectHandler(IPythonHandler):
     def get(self, path=''):
         return self.redirect_to_files(self, path)
 
+notebook_extension = 'ipynb'
 
 #-----------------------------------------------------------------------------
 # URL pattern fragments for re-use

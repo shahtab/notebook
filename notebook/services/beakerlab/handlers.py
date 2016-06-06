@@ -12,9 +12,10 @@ from tornado import gen, web
 
 from notebook.utils import url_path_join, url_escape
 from jupyter_client.jsonutil import date_default
+from functools import reduce
 
 from notebook.base.handlers import (
-    IPythonHandler, APIHandler, json_errors, path_regex,
+     APIHandler, json_errors, path_regex, notebook_extension
 )
 
 
@@ -74,6 +75,7 @@ def validate_model(model, expect_content):
                 u"Keys unexpectedly not None: {keys}".format(keys=errors),
             )
 
+
 class BeakerLabContentsHandler(APIHandler):
     def location_url(self, path):
         """Return the full URL location of a file.
@@ -96,63 +98,6 @@ class BeakerLabContentsHandler(APIHandler):
         self.set_header('Content-Type', 'application/json')
         self.finish(json.dumps(model, default=date_default))
 
-    # @web.authenticated
-    # @json_errors
-    # @gen.coroutine
-    # def get(self, path=''):
-    #     """Return a model for a file or directory.
-    #
-    #     A directory model contains a list of models (without content)
-    #     of the files and directories it contains.
-    #     """
-    #     path = path or ''
-    #     type = self.get_query_argument('type', default=None)
-    #     if type not in {None, 'directory', 'file', 'notebook'}:
-    #         raise web.HTTPError(400, u'Type %r is invalid' % type)
-    #
-    #     format = self.get_query_argument('format', default=None)
-    #     if format not in {None, 'text', 'base64'}:
-    #         raise web.HTTPError(400, u'Format %r is invalid' % format)
-    #     content = self.get_query_argument('content', default='1')
-    #     if content not in {'0', '1'}:
-    #         raise web.HTTPError(400, u'Content %r is invalid' % content)
-    #     content = int(content)
-    #
-    #     model = yield gen.maybe_future(self.contents_manager.get(
-    #         path=path, type=type, format=format, content=content,
-    #     ))
-    #     if model['type'] == 'directory' and content:
-    #         # group listing by type, then by name (case-insensitive)
-    #         # FIXME: sorting should be done in the frontends
-    #         model['content'].sort(key=sort_key)
-    #     validate_model(model, expect_content=content)
-    #     self._finish_model(model, location=False)
-
-    # @web.authenticated
-    # @json_errors
-    # @gen.coroutine
-    # def patch(self, path=''):
-    #     """PATCH renames a file or directory without re-uploading content."""
-    #     cm = self.contents_manager
-    #     model = self.get_json_body()
-    #     if model is None:
-    #         raise web.HTTPError(400, u'JSON body missing')
-    #     model = yield gen.maybe_future(cm.update(model, path))
-    #     validate_model(model, expect_content=False)
-    #     self._finish_model(model)
-
-    # @gen.coroutine
-    # def _copy(self, copy_from, copy_to=None):
-    #     """Copy a file, optionally specifying a target directory."""
-    #     self.log.info(u"Copying {copy_from} to {copy_to}".format(
-    #         copy_from=copy_from,
-    #         copy_to=copy_to or '',
-    #     ))
-    #     model = yield gen.maybe_future(self.contents_manager.copy(copy_from, copy_to))
-    #     self.set_status(201)
-    #     validate_model(model, expect_content=False)
-    #     self._finish_model(model)
-
     @gen.coroutine
     def _upload(self, model, path):
         """Handle upload of a new file to path"""
@@ -162,59 +107,13 @@ class BeakerLabContentsHandler(APIHandler):
         validate_model(model, expect_content=False)
         self._finish_model(model)
 
-    # @gen.coroutine
-    # def _new_untitled(self, path, type='', ext=''):
-    #     """Create a new, empty untitled entity"""
-    #     self.log.info(u"Creating new %s in %s", type or 'file', path)
-    #     model = yield gen.maybe_future(self.contents_manager.new_untitled(path=path, type=type, ext=ext))
-    #     self.set_status(201)
-    #     validate_model(model, expect_content=False)
-    #     self._finish_model(model)
-
     @gen.coroutine
     def _save(self, model, path):
         """Save an existing file."""
         self.log.info(u"Saving file at %s", path)
-        self.log.debug(u"MODEL: ", model)
         model = yield gen.maybe_future(self.contents_manager.save(model, path))
         validate_model(model, expect_content=False)
         self._finish_model(model)
-
-    # @web.authenticated
-    # @json_errors
-    # @gen.coroutine
-    # def post(self, path=''):
-    #     """Create a new file in the specified path.
-    #
-    #     POST creates new files. The server always decides on the name.
-    #
-    #     POST /api/contents/path
-    #       New untitled, empty file or directory.
-    #     POST /api/contents/path
-    #       with body {"copy_from" : "/path/to/OtherNotebook.ipynb"}
-    #       New copy of OtherNotebook in path
-    #     """
-    #
-    #     cm = self.contents_manager
-    #
-    #     if cm.file_exists(path):
-    #         raise web.HTTPError(400, "Cannot POST to files, use PUT instead.")
-    #
-    #     if not cm.dir_exists(path):
-    #         raise web.HTTPError(404, "No such directory: %s" % path)
-    #
-    #     model = self.get_json_body()
-    #
-    #     if model is not None:
-    #         copy_from = model.get('copy_from')
-    #         ext = model.get('ext', '')
-    #         type = model.get('type', '')
-    #         if copy_from:
-    #             yield self._copy(copy_from, path)
-    #         else:
-    #             yield self._new_untitled(path, type=type, ext=ext)
-    #     else:
-    #         yield self._new_untitled(path)
 
     @web.authenticated
     @json_errors
@@ -229,6 +128,7 @@ class BeakerLabContentsHandler(APIHandler):
         """
         model = self.get_json_body()
         #TODO: save to a project dir
+        #TODO: allow only notebooks
         if model:
             if model.get('copy_from'):
                 raise web.HTTPError(403, "Copying not supported")
@@ -240,22 +140,59 @@ class BeakerLabContentsHandler(APIHandler):
         else:
             raise web.HTTPError(500, "Cannot load an empty notebook")
 
-    # @web.authenticated
-    # @json_errors
-    # @gen.coroutine
-    # def delete(self, path=''):
-    #     """delete a file in the given path"""
-    #     cm = self.contents_manager
-    #     self.log.warning('delete %s', path)
-    #     yield gen.maybe_future(cm.delete(path))
-    #     self.set_status(204)
-    #     self.finish()
+
+class BeakerLabSessionHandler(APIHandler):
+
+    def _get_from_dict(self, dict, key_path):
+        return reduce(lambda d, k: d[k], key_path, dict)
+
+    @web.authenticated
+    @json_errors
+    @gen.coroutine
+    def get(self, session_id):
+        # Returns the JSON model for a single session
+        sm = self.session_manager
+        model = yield gen.maybe_future(sm.get_session(session_id=session_id))
+        self.finish(json.dumps(model, default=date_default))
+
+    @web.authenticated
+    @json_errors
+    @gen.coroutine
+    def delete(self, path):
+        # Deletes the session with given path
+        sm = self.session_manager
+        sessions = yield gen.maybe_future(sm.list_sessions())
+        key_path = ["notebook", "path"]
+        full_name = path.strip('/') + '.' + notebook_extension
+        session_id = None
+        for session in sessions:
+            nb_path = self._get_from_dict(session, key_path)
+            if nb_path == full_name:
+                session_id = session["id"]
+        if not (session_id is None):
+            full_path = path + '.' + notebook_extension
+            try:
+                yield gen.maybe_future(sm.delete_session(session_id))
+                exists = yield gen.maybe_future(self.contents_manager.file_exists(full_path))
+                if exists:
+                    cm = self.contents_manager
+                    self.log.warning('delete %s', full_path)
+                    yield gen.maybe_future(cm.delete(full_path))
+                else:
+                    self.log.warning('Path %s does not exist', full_path)
+            except KeyError:
+                # the kernel was deleted but the session wasn't!
+                raise web.HTTPError(410, "Kernel deleted before session")
+        self.set_status(204)
+        self.finish()
 
 #-----------------------------------------------------------------------------
 # URL to handler mappings
 #-----------------------------------------------------------------------------
 
+_session_id_regex = r"(?P<session_id>\w+-\w+-\w+-\w+-\w+)"
 
 default_handlers = [
+    (r"beakerlab/api/sessions%s" % path_regex, BeakerLabSessionHandler),
     (r"beakerlab/api/contents%s" % path_regex, BeakerLabContentsHandler)
 ]

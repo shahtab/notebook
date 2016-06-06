@@ -266,12 +266,12 @@ class NotebookWebApplication(web.Application):
         handlers.extend(load_handlers('services.config.handlers'))
         handlers.extend(load_handlers('services.kernels.handlers'))
         handlers.extend(load_handlers('services.contents.handlers'))
-        handlers.extend(load_handlers('services.beakerlab.handlers'))
         handlers.extend(load_handlers('services.sessions.handlers'))
         handlers.extend(load_handlers('services.nbconvert.handlers'))
         handlers.extend(load_handlers('services.kernelspecs.handlers'))
         handlers.extend(load_handlers('services.security.handlers'))
-        
+        handlers.extend(load_handlers('services.beakerlab.handlers'))
+
         # BEGIN HARDCODED WIDGETS HACK
         # TODO: Remove on notebook 5.0
         widgets = None
