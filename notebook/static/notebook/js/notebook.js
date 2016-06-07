@@ -224,6 +224,7 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         });
 
         this.events.on('set_dirty.Notebook', function (event, data) {
+            that.send_outer_event("jupyter.notebookChanged", [data.content, data.value]);
             that.dirty = data.value;
         });
 
@@ -391,6 +392,13 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
     };
 
     /**
+     * Send custom JQuery event to parent window if exists
+     */
+    Notebook.prototype.send_outer_event = function(eventName, dataArray) {
+       parent.$(parent.document).trigger(eventName, dataArray);
+    };
+
+    /**
      * Set the dirty flag, and trigger the set_dirty.Notebook event
      */
     Notebook.prototype.set_dirty = function (value) {
@@ -400,7 +408,10 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         if (this.dirty === value) {
             return;
         }
-        this.events.trigger('set_dirty.Notebook', {value: value});
+
+        var content = this.toJSON();
+
+        this.events.trigger('set_dirty.Notebook', {value: value, content: content});
     };
 
     /**
@@ -2639,6 +2650,8 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
                 }
             });
         }
+        //sync content with Beaker Lab
+        parent.$(parent.document).trigger("jupyter.notebookUpdated", [this.toJSON()]);
         this.events.trigger('notebook_saved.Notebook');
         this._update_autosave_interval(start);
         if (this._checkpoint_after_save) {
