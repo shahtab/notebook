@@ -329,6 +329,19 @@ class FileContentsManager(FileManagerMixin, ContentsManager):
             self.validate_notebook_model(model)
         return model
 
+    def empty_model(self, path):
+        """Build an empty response model"""
+        os_path = self._get_os_path(path)
+        info = os.stat(os_path)
+        last_modified = tz.utcfromtimestamp(info.st_mtime)
+        created = tz.utcfromtimestamp(info.st_ctime)
+        # Create the base model.
+        model = {}
+        model['path'] = path
+        model['last_modified'] = last_modified
+        model['created'] = created
+        return model
+
     def get(self, path, content=True, type=None, format=None):
         """ Takes a path for an entity and returns its model
 
