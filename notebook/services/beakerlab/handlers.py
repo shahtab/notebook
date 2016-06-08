@@ -134,8 +134,7 @@ class BeakerLabContentsHandler(APIHandler):
                 raise web.HTTPError(403, "Copying not supported")
             exists = yield gen.maybe_future(self.contents_manager.file_exists(path))
             if exists:
-                model = self.contents_manager.empty_model(path)
-                self._finish_model(model)
+                yield gen.maybe_future(self._save(model, path))
             else:
                 yield gen.maybe_future(self._upload(model, path))
         else:

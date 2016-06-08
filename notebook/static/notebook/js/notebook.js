@@ -224,7 +224,8 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         });
 
         this.events.on('set_dirty.Notebook', function (event, data) {
-            that.send_outer_event("jupyter.notebookChanged", [data.content, data.value]);
+            var content = that.toJSON();
+            that.send_outer_event("jupyter.embedded.notebookChanged", [content, data.value]);
             that.dirty = data.value;
         });
 
@@ -409,9 +410,7 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
             return;
         }
 
-        var content = this.toJSON();
-
-        this.events.trigger('set_dirty.Notebook', {value: value, content: content});
+        this.events.trigger('set_dirty.Notebook', {value: value});
     };
 
     /**
@@ -2651,7 +2650,8 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
             });
         }
         //sync content with Beaker Lab
-        parent.$(parent.document).trigger("jupyter.notebookUpdated", [this.toJSON()]);
+        console.log('updated jupyter');
+        parent.$(parent.document).trigger("jupyter.embedded.notebookUpdated", [this.toJSON()]);
         this.events.trigger('notebook_saved.Notebook');
         this._update_autosave_interval(start);
         if (this._checkpoint_after_save) {
@@ -2810,7 +2810,7 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         this.notebook_path = notebook_path;
         this.notebook_name = utils.url_path_split(this.notebook_path)[1];
         this.events.trigger('notebook_loading.Notebook');
-        this.contents.get(notebook_path, {type: 'notebook'}).then(
+        this.contents.get(notebook_path, {type: 'notebook', timestamp: new Date().getTime()}).then(
             $.proxy(this.load_notebook_success, this),
             $.proxy(this.load_notebook_error, this)
         );
