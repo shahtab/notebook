@@ -225,7 +225,9 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
 
         this.events.on('set_dirty.Notebook', function (event, data) {
             var content = that.toJSON();
-            that.send_outer_event("jupyter.embedded.notebookChanged", [content, data.value]);
+            if (data.value) {
+                that.send_outer_event("jupyter.embedded.notebookChanged", [content, data.value]);
+            }
             that.dirty = data.value;
         });
 
