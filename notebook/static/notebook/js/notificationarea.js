@@ -331,7 +331,7 @@ define([
 
         // Autosave events
         this.events.on('autosave_disabled.Notebook', function () {
-            nnw.set_message("Autosave disabled", 2000);
+            // nnw.set_message("Autosave disabled", 2000);
         });
         this.events.on('autosave_enabled.Notebook', function (evt, interval) {
             nnw.set_message("Saving every " + interval / 1000 + "s", 1000);
