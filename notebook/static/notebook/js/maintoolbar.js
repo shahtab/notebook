@@ -30,10 +30,10 @@ define([
 
     MainToolBar.prototype._make = function () {
         var grps = [
-          [
-            ['jupyter-notebook:save-notebook'],
-            'save-notbook'
-          ],
+          // [
+          //   ['jupyter-notebook:save-notebook'],
+          //   'save-notbook'
+          // ],
           [
             ['jupyter-notebook:insert-cell-below'],
             'insert_above_below'],

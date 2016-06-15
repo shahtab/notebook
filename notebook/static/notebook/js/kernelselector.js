@@ -58,36 +58,36 @@ define([
     KernelSelector.prototype._got_kernelspecs = function(data) {
         var that = this;
         this.kernelspecs = data.kernelspecs;
-        var change_kernel_submenu = $("#menu-change-kernel-submenu");
-        var new_notebook_submenu = $("#menu-new-notebook-submenu");
-        var keys = _sorted_names(data.kernelspecs);
+        // var change_kernel_submenu = $("#menu-change-kernel-submenu");
+        // var new_notebook_submenu = $("#menu-new-notebook-submenu");
+        // var keys = _sorted_names(data.kernelspecs);
         
-        keys.map(function (key) {
-            // Create the Kernel > Change kernel submenu
-            var ks = data.kernelspecs[key];
-            change_kernel_submenu.append(
-                $("<li>").attr("id", "kernel-submenu-"+ks.name).append(
-                    $('<a>')
-                        .attr('href', '#')
-                        .click( function () {
-                            that.set_kernel(ks.name);
-                        })
-                        .text(ks.spec.display_name)
-                )
-            );
-            // Create the File > New Notebook submenu
-            new_notebook_submenu.append(
-                $("<li>").attr("id", "new-notebook-submenu-"+ks.name).append(
-                    $('<a>')
-                        .attr('href', '#')
-                        .click( function () {
-                            that.new_notebook(ks.name);
-                        })
-                        .text(ks.spec.display_name)
-                )
-            );
-
-        });
+        // keys.map(function (key) {
+        //     // Create the Kernel > Change kernel submenu
+        //     var ks = data.kernelspecs[key];
+        //     change_kernel_submenu.append(
+        //         $("<li>").attr("id", "kernel-submenu-"+ks.name).append(
+        //             $('<a>')
+        //                 .attr('href', '#')
+        //                 .click( function () {
+        //                     that.set_kernel(ks.name);
+        //                 })
+        //                 .text(ks.spec.display_name)
+        //         )
+        //     );
+        //     // Create the File > New Notebook submenu
+        //     new_notebook_submenu.append(
+        //         $("<li>").attr("id", "new-notebook-submenu-"+ks.name).append(
+        //             $('<a>')
+        //                 .attr('href', '#')
+        //                 .click( function () {
+        //                     that.new_notebook(ks.name);
+        //                 })
+        //                 .text(ks.spec.display_name)
+        //         )
+        //     );
+        //
+        // });
         // trigger loaded promise
         this._loaded = true;
         this._finish_load();

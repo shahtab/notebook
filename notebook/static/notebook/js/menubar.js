@@ -256,13 +256,13 @@ define([
             that.notebook.kernel.reconnect();
         });
         // Help
-        if (this.tour) {
-            this.element.find('#notebook_tour').click(function () {
-                that.tour.start();
-            });
-        } else {
-            this.element.find('#notebook_tour').addClass("disabled");
-        }
+        // if (this.tour) {
+        //     this.element.find('#notebook_tour').click(function () {
+        //         that.tour.start();
+        //     });
+        // } else {
+        //     this.element.find('#notebook_tour').addClass("disabled");
+        // }
         this.element.find('#keyboard_shortcuts').click(function () {
             that.quick_help.show_keyboard_shortcuts();
         });
