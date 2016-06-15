@@ -182,7 +182,7 @@ define([
         // });
 
         // View
-        // this._add_celltoolbar_list();
+        this._add_celltoolbar_list();
 
         // Edit
         // this.element.find('#edit_nb_metadata').click(function () {
