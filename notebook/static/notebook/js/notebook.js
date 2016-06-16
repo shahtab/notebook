@@ -2834,6 +2834,7 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
             console.log("Notebook failed to load from JSON:", e);
         }
         if (failed || data.message) {
+            this.send_outer_event('jupyter.embedded.notebookLoadFailed', [data.message ? data.message : '']);
             // *either* fromJSON failed or validation failed
             var body = $("<div>");
             var title;
@@ -2971,6 +2972,7 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         // now that we're fully loaded, it is safe to restore save functionality
         this._fully_loaded = true;
         this.events.trigger('notebook_loaded.Notebook');
+        this.send_outer_event('jupyter.embedded.notebookLoaded', []);
     };
 
     Notebook.prototype.set_kernelselector = function(k_selector){
@@ -2984,6 +2986,7 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
      */
     Notebook.prototype.load_notebook_error = function (error) {
         this.events.trigger('notebook_load_failed.Notebook', error);
+        this.send_outer_event('jupyter.embedded.notebookLoadFailed', []);
         var msg;
         if (error.name === utils.XHR_ERROR && error.xhr.status === 500) {
             utils.log_ajax_error(error.xhr, error.xhr_status, error.xhr_error);

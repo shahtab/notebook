@@ -169,24 +169,24 @@ define([
         called directly, and periodically in timeouts.
         */
         this._schedule_render_checkpoint();
-        var el = this.element.find('span.checkpoint_status');
-        if (!this._checkpoint_date) {
-            el.text('').attr('title', 'no checkpoint');
-            return;
-        }
-        var chkd = moment(this._checkpoint_date);
-        var long_date = chkd.format('llll');
-        var human_date;
-        var tdelta = Math.ceil(new Date() - this._checkpoint_date);
-        if (tdelta < utils.time.milliseconds.d){
-            // less than 24 hours old, use relative date
-            human_date = chkd.fromNow();
-        } else {
-            // otherwise show calendar 
-            // <Today | yesterday|...> at hh,mm,ss
-            human_date = chkd.calendar();
-        }
-        el.text('Last Checkpoint: ' + human_date).attr('title', long_date);
+        // var el = this.element.find('span.checkpoint_status');
+        // if (!this._checkpoint_date) {
+        //     el.text('').attr('title', 'no checkpoint');
+        //     return;
+        // }
+        // var chkd = moment(this._checkpoint_date);
+        // var long_date = chkd.format('llll');
+        // var human_date;
+        // var tdelta = Math.ceil(new Date() - this._checkpoint_date);
+        // if (tdelta < utils.time.milliseconds.d){
+        //     // less than 24 hours old, use relative date
+        //     human_date = chkd.fromNow();
+        // } else {
+        //     // otherwise show calendar
+        //     // <Today | yesterday|...> at hh,mm,ss
+        //     human_date = chkd.calendar();
+        // }
+        // el.text('Last Checkpoint: ' + human_date).attr('title', long_date);
     };
 
     
@@ -195,25 +195,25 @@ define([
         
         periodically updated, so short values like 'a few seconds ago' don't get stale.
         */
-        if (!this._checkpoint_date) {
-            return;
-        }
-        if ((this._checkpoint_timeout)) {
-            clearTimeout(this._checkpoint_timeout);
-        }
-        var dt = Math.ceil(new Date() - this._checkpoint_date);
-        this._checkpoint_timeout = setTimeout(
-            $.proxy(this._render_checkpoint, this),
-            utils.time.timeout_from_dt(dt)
-        );
+        // if (!this._checkpoint_date) {
+        //     return;
+        // }
+        // if ((this._checkpoint_timeout)) {
+        //     clearTimeout(this._checkpoint_timeout);
+        // }
+        // var dt = Math.ceil(new Date() - this._checkpoint_date);
+        // this._checkpoint_timeout = setTimeout(
+        //     $.proxy(this._render_checkpoint, this),
+        //     utils.time.timeout_from_dt(dt)
+        // );
     };
 
     SaveWidget.prototype.set_autosaved = function (dirty) {
-        if (dirty) {
-            this.set_save_status("(unsaved changes)");
-        } else {
-            this.set_save_status("(autosaved)");
-        }
+        // if (dirty) {
+        //     this.set_save_status("(unsaved changes)");
+        // } else {
+        //     this.set_save_status("(autosaved)");
+        // }
     };
 
     return {'SaveWidget': SaveWidget};
