@@ -169,7 +169,6 @@ class BeakerLabSessionHandler(APIHandler):
             nb_path = self._get_from_dict(session, key_path)
             if nb_path == nb_name:
                 session_id = session["id"]
-        print(session_id)
         if not (session_id is None):
             try:
                 yield gen.maybe_future(sm.delete_session(session_id))

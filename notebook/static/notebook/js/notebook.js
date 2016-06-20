@@ -225,9 +225,7 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
 
         this.events.on('set_dirty.Notebook', function (event, data) {
             var content = that.toJSON();
-            if (data.value) {
-                that.send_outer_event("jupyter.embedded.notebookChanged", [content, data.value]);
-            }
+            that.send_outer_event("jupyter.embedded.notebookChanged", [content, data.value]);
             that.dirty = data.value;
         });
 
@@ -2479,6 +2477,7 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         var cells = this.get_cells();
         var ncells = cells.length;
         var cell_array = new Array(ncells);
+
         var trusted = true;
         for (var i=0; i<ncells; i++) {
             var cell = cells[i];
@@ -2651,9 +2650,6 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
                 }
             });
         }
-        //sync content with Beaker Lab
-        console.log('updated jupyter');
-        parent.$(parent.document).trigger("jupyter.embedded.notebookUpdated", [this.toJSON()]);
         this.events.trigger('notebook_saved.Notebook');
         this._update_autosave_interval(start);
         if (this._checkpoint_after_save) {
