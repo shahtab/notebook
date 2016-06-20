@@ -186,13 +186,28 @@ class BeakerLabSessionHandler(APIHandler):
         self.set_status(204)
         self.finish()
 
+
+class BeakerLabStatusHandler(APIHandler):
+
+    @web.authenticated
+    @json_errors
+    @gen.coroutine
+    def get(self, container_uuid):
+        model = {"container_uuid": container_uuid}
+        self.set_status(200)
+        self.finish(json.dumps(model, default=date_default))
+
+
+
 #-----------------------------------------------------------------------------
 # URL to handler mappings
 #-----------------------------------------------------------------------------
 
 _session_id_regex = r"(?P<session_id>\w+-\w+-\w+-\w+-\w+)"
+_uuid_regex = r"(?P<container_uuid>[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"
 
 default_handlers = [
     (r"beakerlab/api/sessions%s" % path_regex, BeakerLabSessionHandler),
+    (r"%s/status" % _uuid_regex, BeakerLabStatusHandler),
     (r"beakerlab/api/contents%s" % path_regex, BeakerLabContentsHandler)
 ]
