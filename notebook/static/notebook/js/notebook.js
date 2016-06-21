@@ -225,7 +225,7 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
 
         this.events.on('set_dirty.Notebook', function (event, data) {
             var content = that.toJSON();
-            that.send_outer_event("jupyter.embedded.notebookChanged", [content, data.value]);
+            that.send_outer_event("jupyter.embedded.notebookChanged", [content]);
             that.dirty = data.value;
         });
 
@@ -407,6 +407,8 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
             value = true;
         }
         if (this.dirty === value) {
+            var content = this.toJSON();
+            this.send_outer_event("jupyter.embedded.notebookChanged", [content]);
             return;
         }
 
@@ -469,15 +471,15 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
      * Display a dialog that allows the user to edit the Notebook's metadata.
      */
     Notebook.prototype.edit_metadata = function () {
-        var that = this;
-        dialog.edit_metadata({
-            md: this.metadata, 
-            callback: function (md) {
-                that.metadata = md;
-            },
-            name: 'Notebook',
-            notebook: this,
-            keyboard_manager: this.keyboard_manager});
+        // var that = this;
+        // dialog.edit_metadata({
+        //     md: this.metadata, 
+        //     callback: function (md) {
+        //         that.metadata = md;
+        //     },
+        //     name: 'Notebook',
+        //     notebook: this,
+        //     keyboard_manager: this.keyboard_manager});
     };
 
     // Cell indexing, retrieval, etc.
