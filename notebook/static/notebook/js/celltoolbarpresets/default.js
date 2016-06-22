@@ -34,16 +34,19 @@ define([
     };
 
     var register = function (notebook) {
-        // CellToolbar.register_callback('default.rawedit', add_raw_edit_button);
-        // raw_edit = $.proxy(raw_edit, {
-        //     notebook: notebook,
-        //     keyboard_manager: notebook.keyboard_manager
-        // });
-        //
-        // var example_preset = [];
-        // example_preset.push('default.rawedit');
+        if (window.short_version) {
+            return;
+        }
+        CellToolbar.register_callback('default.rawedit', add_raw_edit_button);
+        raw_edit = $.proxy(raw_edit, {
+            notebook: notebook,
+            keyboard_manager: notebook.keyboard_manager
+        });
+        
+        var example_preset = [];
+        example_preset.push('default.rawedit');
 
-        // CellToolbar.register_preset('Edit Metadata', example_preset, notebook);
+        CellToolbar.register_preset('Edit Metadata', example_preset, notebook);
     };
     return {'register': register};
 });

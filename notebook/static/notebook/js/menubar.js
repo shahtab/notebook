@@ -101,58 +101,61 @@ define([
          *  File
          */
         var that = this;
+        if (window.short_version) {
+            return;
+        }
         
-        // this.element.find('#open_notebook').click(function () {
-        //     var parent = utils.url_path_split(that.notebook.notebook_path)[0];
-        //     window.open(
-        //         utils.url_path_join(
-        //             that.base_url, 'tree',
-        //             utils.encode_uri_components(parent)
-        //         ), IPython._target);
-        // });
-        // this.element.find('#copy_notebook').click(function () {
-        //     that.notebook.copy_notebook();
-        //     return false;
-        // });
-        // this.element.find('#download_ipynb').click(function () {
-        //     var base_url = that.notebook.base_url;
-        //     var notebook_path = utils.encode_uri_components(that.notebook.notebook_path);
-        //     var w = window.open('');
-        //     var url = utils.url_path_join(
-        //         base_url, 'files', notebook_path
-        //     ) + '?download=1';
-        //     if (that.notebook.dirty && that.notebook.writable) {
-        //         that.notebook.save_notebook().then(function() {
-        //             w.location = url;
-        //         });
-        //     } else {
-        //         w.location = url;
-        //     }
-        // });
+        this.element.find('#open_notebook').click(function () {
+            var parent = utils.url_path_split(that.notebook.notebook_path)[0];
+            window.open(
+                utils.url_path_join(
+                    that.base_url, 'tree',
+                    utils.encode_uri_components(parent)
+                ), IPython._target);
+        });
+        this.element.find('#copy_notebook').click(function () {
+            that.notebook.copy_notebook();
+            return false;
+        });
+        this.element.find('#download_ipynb').click(function () {
+            var base_url = that.notebook.base_url;
+            var notebook_path = utils.encode_uri_components(that.notebook.notebook_path);
+            var w = window.open('');
+            var url = utils.url_path_join(
+                base_url, 'files', notebook_path
+            ) + '?download=1';
+            if (that.notebook.dirty && that.notebook.writable) {
+                that.notebook.save_notebook().then(function() {
+                    w.location = url;
+                });
+            } else {
+                w.location = url;
+            }
+        });
         
-        // this.element.find('#print_preview').click(function () {
-        //     that._nbconvert('html', false);
-        // });
-        //
-        // this.element.find('#download_html').click(function () {
-        //     that._nbconvert('html', true);
-        // });
-        //
-        // this.element.find('#download_markdown').click(function () {
-        //     that._nbconvert('markdown', true);
-        // });
-        //
-        // this.element.find('#download_rst').click(function () {
-        //     that._nbconvert('rst', true);
-        // });
-        //
-        // this.element.find('#download_pdf').click(function () {
-        //     that._nbconvert('pdf', true);
-        // });
-        //
-        // this.element.find('#download_script').click(function () {
-        //     that._nbconvert('script', true);
-        // });
+        this.element.find('#print_preview').click(function () {
+            that._nbconvert('html', false);
+        });
+        
+        this.element.find('#download_html').click(function () {
+            that._nbconvert('html', true);
+        });
+        
+        this.element.find('#download_markdown').click(function () {
+            that._nbconvert('markdown', true);
+        });
+        
+        this.element.find('#download_rst').click(function () {
+            that._nbconvert('rst', true);
+        });
+        
+        this.element.find('#download_pdf').click(function () {
+            that._nbconvert('pdf', true);
+        });
+        
+        this.element.find('#download_script').click(function () {
+            that._nbconvert('script', true);
+        });
 
 
         this.events.on('trust_changed.Notebook', function (event, trusted) {
@@ -168,28 +171,33 @@ define([
                     .find("a").text("Trust Notebook");
             }
         });
-
-        // this.element.find('#kill_and_exit').click(function () {
-        //     var close_window = function () {
-        //         /**
-        //          * allow closing of new tabs in Chromium, impossible in FF
-        //          */
-        //         window.open('', '_self', '');
-        //         window.close();
-        //     };
-        //     // finish with close on success or failure
-        //     that.notebook.session.delete(close_window, close_window);
-        // });
+        
+        if (!window.short_version) {
+            this.element.find('#kill_and_exit').click(function () {
+            var close_window = function () {
+                /**
+                 * allow closing of new tabs in Chromium, impossible in FF
+                 */
+                window.open('', '_self', '');
+                window.close();
+            };
+            // finish with close on success or failure
+            that.notebook.session.delete(close_window, close_window);
+        });
+            
+        }
 
         // View
         this._add_celltoolbar_list();
-
+        
         // Edit
-        // this.element.find('#edit_nb_metadata').click(function () {
-        //     that.notebook.edit_metadata({
-        //         notebook: that.notebook,
-        //         keyboard_manager: that.notebook.keyboard_manager});
-        // });
+        if (!window.short_version) {
+            this.element.find('#edit_nb_metadata').click(function () {
+                that.notebook.edit_metadata({
+                    notebook: that.notebook,
+                    keyboard_manager: that.notebook.keyboard_manager});
+                });
+            }
              
         var id_actions_dict = {
             '#trust_notebook' : 'trust-notebook',
@@ -256,13 +264,13 @@ define([
             that.notebook.kernel.reconnect();
         });
         // Help
-        // if (this.tour) {
-        //     this.element.find('#notebook_tour').click(function () {
-        //         that.tour.start();
-        //     });
-        // } else {
-        //     this.element.find('#notebook_tour').addClass("disabled");
-        // }
+        if (this.tour && !window.short_version) {
+            this.element.find('#notebook_tour').click(function () {
+                that.tour.start();
+            });
+        } else {
+            this.element.find('#notebook_tour').addClass("disabled");
+        }
         this.element.find('#keyboard_shortcuts').click(function () {
             that.quick_help.show_keyboard_shortcuts();
         });
@@ -334,34 +342,37 @@ define([
     };
 
     MenuBar.prototype.update_restore_checkpoint = function(checkpoints) {
-        // var ul = this.element.find("#restore_checkpoint").find("ul");
-        // ul.empty();
-        // if (!checkpoints || checkpoints.length === 0) {
-        //     ul.append(
-        //         $("<li/>")
-        //         .addClass("disabled")
-        //         .append(
-        //             $("<a/>")
-        //             .text("No checkpoints")
-        //         )
-        //     );
-        //     return;
-        // }
-        //
-        // var that = this;
-        // checkpoints.map(function (checkpoint) {
-        //     var d = new Date(checkpoint.last_modified);
-        //     ul.append(
-        //         $("<li/>").append(
-        //             $("<a/>")
-        //             .attr("href", "#")
-        //             .text(moment(d).format("LLLL"))
-        //             .click(function () {
-        //                 that.notebook.restore_checkpoint_dialog(checkpoint);
-        //             })
-        //         )
-        //     );
-        // });
+        if (window.short_version) {
+            return;
+        }
+        var ul = this.element.find("#restore_checkpoint").find("ul");
+        ul.empty();
+        if (!checkpoints || checkpoints.length === 0) {
+            ul.append(
+                $("<li/>")
+                .addClass("disabled")
+                .append(
+                    $("<a/>")
+                    .text("No checkpoints")
+                )
+            );
+            return;
+        }
+        
+        var that = this;
+        checkpoints.map(function (checkpoint) {
+            var d = new Date(checkpoint.last_modified);
+            ul.append(
+                $("<li/>").append(
+                    $("<a/>")
+                    .attr("href", "#")
+                    .text(moment(d).format("LLLL"))
+                    .click(function () {
+                        that.notebook.restore_checkpoint_dialog(checkpoint);
+                    })
+                )
+            );
+        });
     };
     
     MenuBar.prototype.update_nbconvert_script = function(langinfo) {

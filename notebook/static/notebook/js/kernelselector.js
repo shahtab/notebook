@@ -59,6 +59,9 @@ define([
         var that = this;
         this.kernelspecs = data.kernelspecs;
         if (window.short_version) {
+            // trigger loaded promise
+            this._loaded = true;
+            this._finish_load();
             return;
         }
         var change_kernel_submenu = $("#menu-change-kernel-submenu");

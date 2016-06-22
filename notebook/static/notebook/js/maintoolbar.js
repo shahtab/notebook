@@ -29,7 +29,13 @@ define([
     MainToolBar.prototype = Object.create(toolbar.ToolBar.prototype);
 
     MainToolBar.prototype._make = function () {
-        var grps = [
+        var grps = [];
+        if (!window.short_version) {
+            grps.push([
+            ['jupyter-notebook:save-notebook'],
+            'save-notbook']);
+        }
+        var other_actions = [
           // [
           //   ['jupyter-notebook:save-notebook'],
           //   'save-notbook'
@@ -56,6 +62,11 @@ define([
          ['<add_celltype_list>'],
          [['jupyter-notebook:show-command-palette']]
         ];
+        grps.push.apply(grps, other_actions);
+        if (!window.short_version) {
+            grps.push(['<add_celltoolbar_reminder>']);
+        }
+
         this.construct(grps);
     };
    
