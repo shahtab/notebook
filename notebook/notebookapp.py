@@ -238,6 +238,7 @@ class NotebookWebApplication(web.Application):
             nbextensions_path=jupyter_app.nbextensions_path,
             websocket_url=jupyter_app.websocket_url,
             mathjax_url=jupyter_app.mathjax_url,
+            short_version = jupyter_app.short_version,
             mathjax_config=jupyter_app.mathjax_config,
             config=jupyter_app.config,
             config_dir=jupyter_app.config_dir,
@@ -367,6 +368,14 @@ flags['no-mathjax']=(
     connection, or for offline use of the notebook.
     
     When disabled, equations etc. will appear as their untransformed TeX source.
+    """
+)
+
+flags['short-version'] = (
+    {'NotebookApp': {'short_version': True}},
+    """ Remove notebook file
+    Remove notebook file immediately after it is loaded if set to True.
+    Use this option for beakerlab where notebooks can be stored only temporarily
     """
 )
 
@@ -659,6 +668,11 @@ class NotebookApp(JupyterApp):
         """set mathjax url to empty if mathjax is disabled"""
         if not change['new']:
             self.mathjax_url = u''
+
+    short_version = Bool(False, config=True, help=""" Delete file immediately""")
+
+    def _short_version_changed(self, name, old, new):
+        self.short_version = new
 
     base_url = Unicode('/jupyter', config=True,
                                help='''The base URL for the notebook server.

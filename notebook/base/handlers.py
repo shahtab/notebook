@@ -158,6 +158,10 @@ class IPythonHandler(AuthenticatedHandler):
         if not url or url_is_absolute(url):
             return url
         return url_path_join(self.base_url, url)
+
+    @property
+    def short_version(self):
+        return self.settings.get('short_version', False)
     
     @property
     def mathjax_config(self):

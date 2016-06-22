@@ -2971,6 +2971,10 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         this._fully_loaded = true;
         this.events.trigger('notebook_loaded.Notebook');
         this.send_outer_event('jupyter.embedded.notebookLoaded', []);
+        if (window.short_version) {
+           //in beakerlab notebook file acts as a temp file
+           this.delete(); 
+        }
     };
 
     Notebook.prototype.set_kernelselector = function(k_selector){
