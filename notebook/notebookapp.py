@@ -252,26 +252,41 @@ class NotebookWebApplication(web.Application):
 
     def init_handlers(self, settings):
         """Load the (URL pattern, handler) tuples for each component."""
-        
+
+        short_version = settings['short_version']
         # Order matters. The first handler to match the URL will handle the request.
         handlers = []
-        handlers.extend(load_handlers('tree.handlers'))
-        handlers.extend([(r"/login", settings['login_handler_class'])])
-        handlers.extend([(r"/logout", settings['logout_handler_class'])])
-        handlers.extend(load_handlers('files.handlers'))
+        # Since handlers order matters, multiple if checks added instead of regrouping
+        if not short_version:
+            handlers.extend(load_handlers('tree.handlers'))
+            handlers.extend([(r"/login", settings['login_handler_class'])])
+            handlers.extend([(r"/logout", settings['logout_handler_class'])])
+            handlers.extend(load_handlers('files.handlers'))
+
         handlers.extend(load_handlers('notebook.handlers'))
-        handlers.extend(load_handlers('nbconvert.handlers'))
+
+        if not short_version:
+            handlers.extend(load_handlers('nbconvert.handlers'))
+
         handlers.extend(load_handlers('kernelspecs.handlers'))
-        handlers.extend(load_handlers('edit.handlers'))
+
+        if not short_version:
+            handlers.extend(load_handlers('edit.handlers'))
+
         handlers.extend(load_handlers('services.api.handlers'))
         handlers.extend(load_handlers('services.config.handlers'))
         handlers.extend(load_handlers('services.kernels.handlers'))
         handlers.extend(load_handlers('services.contents.handlers'))
         handlers.extend(load_handlers('services.sessions.handlers'))
-        handlers.extend(load_handlers('services.nbconvert.handlers'))
+
+        if not short_version:
+            handlers.extend(load_handlers('services.nbconvert.handlers'))
+
         handlers.extend(load_handlers('services.kernelspecs.handlers'))
         handlers.extend(load_handlers('services.security.handlers'))
-        handlers.extend(load_handlers('services.beakerlab.handlers'))
+        if short_version:
+            handlers.extend(load_handlers('services.beakerlab.handlers'))
+
 
         # BEGIN HARDCODED WIDGETS HACK
         # TODO: Remove on notebook 5.0
