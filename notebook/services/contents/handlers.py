@@ -135,6 +135,8 @@ class ContentsHandler(APIHandler):
     @gen.coroutine
     def patch(self, path=''):
         """PATCH renames a file or directory without re-uploading content."""
+        if self.short_version:
+            raise web.HTTPError(403, u'PATCH not supported')
         cm = self.contents_manager
         model = self.get_json_body()
         if model is None:
@@ -195,6 +197,8 @@ class ContentsHandler(APIHandler):
           with body {"copy_from" : "/path/to/OtherNotebook.ipynb"}
           New copy of OtherNotebook in path
         """
+        if self.short_version:
+            raise web.HTTPError(403, u'POST not supported')
 
         cm = self.contents_manager
 
@@ -231,6 +235,9 @@ class ContentsHandler(APIHandler):
           in `content` key of JSON request body. If content is not specified,
           create a new empty notebook.
         """
+        if self.short_version:
+            raise web.HTTPError(403, u'PUT not supported')
+
         model = self.get_json_body()
         if model:
             if model.get('copy_from'):

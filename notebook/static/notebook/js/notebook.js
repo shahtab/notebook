@@ -3096,46 +3096,49 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
      * @param  {string} checkpoint ID
      */
     Notebook.prototype.restore_checkpoint_dialog = function (checkpoint) {
-        // var that = this;
-        // checkpoint = checkpoint || this.last_checkpoint;
-        // if ( ! checkpoint ) {
-        //     console.log("restore dialog, but no checkpoint to restore to!");
-        //     return;
-        // }
-        // var body = $('<div/>').append(
-        //     $('<p/>').addClass("p-space").text(
-        //         "Are you sure you want to revert the notebook to " +
-        //         "the latest checkpoint?"
-        //     ).append(
-        //         $("<strong/>").text(
-        //             " This cannot be undone."
-        //         )
-        //     )
-        // ).append(
-        //     $('<p/>').addClass("p-space").text("The checkpoint was last updated at:")
-        // ).append(
-        //     $('<p/>').addClass("p-space").text(
-        //         moment(checkpoint.last_modified).format('LLLL') +
-        //         ' ('+moment(checkpoint.last_modified).fromNow()+')'// Long form:  Tuesday, January 27, 2015 12:15 PM
-        //     ).css("text-align", "center")
-        // );
-        //
-        // dialog.modal({
-        //     notebook: this,
-        //     keyboard_manager: this.keyboard_manager,
-        //     title : "Revert notebook to checkpoint",
-        //     body : body,
-        //     default_button: "Cancel",
-        //     buttons : {
-        //         Cancel: {},
-        //         Revert : {
-        //             class : "btn-danger",
-        //             click : function () {
-        //                 that.restore_checkpoint(checkpoint.id);
-        //             }
-        //         }
-        //     }
-        // });
+        if (window.short_version) {
+            return;
+        }
+        var that = this;
+        checkpoint = checkpoint || this.last_checkpoint;
+        if ( ! checkpoint ) {
+            console.log("restore dialog, but no checkpoint to restore to!");
+            return;
+        }
+        var body = $('<div/>').append(
+            $('<p/>').addClass("p-space").text(
+                "Are you sure you want to revert the notebook to " +
+                "the latest checkpoint?"
+            ).append(
+                $("<strong/>").text(
+                    " This cannot be undone."
+                )
+            )
+        ).append(
+            $('<p/>').addClass("p-space").text("The checkpoint was last updated at:")
+        ).append(
+            $('<p/>').addClass("p-space").text(
+                moment(checkpoint.last_modified).format('LLLL') +
+                ' ('+moment(checkpoint.last_modified).fromNow()+')'// Long form:  Tuesday, January 27, 2015 12:15 PM
+            ).css("text-align", "center")
+        );
+
+        dialog.modal({
+            notebook: this,
+            keyboard_manager: this.keyboard_manager,
+            title : "Revert notebook to checkpoint",
+            body : body,
+            default_button: "Cancel",
+            buttons : {
+                Cancel: {},
+                Revert : {
+                    class : "btn-danger",
+                    click : function () {
+                        that.restore_checkpoint(checkpoint.id);
+                    }
+                }
+            }
+        });
     };
     
     /**
