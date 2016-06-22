@@ -2959,11 +2959,9 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         } else {
             celltoolbar.CellToolbar.global_hide();
         }
-
-        this.set_autosave_interval(0); //disabled autosave
         
         if (!this.writable) {
-
+            this.set_autosave_interval(0);
             this.events.trigger('notebook_read_only.Notebook');
         }
         
