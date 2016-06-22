@@ -102,62 +102,60 @@ define([
          */
         var that = this;
         if (window.short_version) {
-            return;
+            this.element.find('#open_notebook').click(function () {
+                var parent = utils.url_path_split(that.notebook.notebook_path)[0];
+                window.open(
+                    utils.url_path_join(
+                        that.base_url, 'tree',
+                        utils.encode_uri_components(parent)
+                    ), IPython._target);
+            });
+
+            this.element.find('#copy_notebook').click(function () {
+                that.notebook.copy_notebook();
+                return false;
+            });
+            this.element.find('#download_ipynb').click(function () {
+                var base_url = that.notebook.base_url;
+                var notebook_path = utils.encode_uri_components(that.notebook.notebook_path);
+                var w = window.open('');
+                var url = utils.url_path_join(
+                        base_url, 'files', notebook_path
+                    ) + '?download=1';
+                if (that.notebook.dirty && that.notebook.writable) {
+                    that.notebook.save_notebook().then(function () {
+                        w.location = url;
+                    });
+                } else {
+                    w.location = url;
+                }
+            });
+
+            this.element.find('#print_preview').click(function () {
+                that._nbconvert('html', false);
+            });
+
+            this.element.find('#download_html').click(function () {
+                that._nbconvert('html', true);
+            });
+
+            this.element.find('#download_markdown').click(function () {
+                that._nbconvert('markdown', true);
+            });
+
+            this.element.find('#download_rst').click(function () {
+                that._nbconvert('rst', true);
+            });
+
+            this.element.find('#download_pdf').click(function () {
+                that._nbconvert('pdf', true);
+            });
+
+            this.element.find('#download_script').click(function () {
+                that._nbconvert('script', true);
+            });
         }
         
-        this.element.find('#open_notebook').click(function () {
-            var parent = utils.url_path_split(that.notebook.notebook_path)[0];
-            window.open(
-                utils.url_path_join(
-                    that.base_url, 'tree',
-                    utils.encode_uri_components(parent)
-                ), IPython._target);
-        });
-        this.element.find('#copy_notebook').click(function () {
-            that.notebook.copy_notebook();
-            return false;
-        });
-        this.element.find('#download_ipynb').click(function () {
-            var base_url = that.notebook.base_url;
-            var notebook_path = utils.encode_uri_components(that.notebook.notebook_path);
-            var w = window.open('');
-            var url = utils.url_path_join(
-                base_url, 'files', notebook_path
-            ) + '?download=1';
-            if (that.notebook.dirty && that.notebook.writable) {
-                that.notebook.save_notebook().then(function() {
-                    w.location = url;
-                });
-            } else {
-                w.location = url;
-            }
-        });
-        
-        this.element.find('#print_preview').click(function () {
-            that._nbconvert('html', false);
-        });
-        
-        this.element.find('#download_html').click(function () {
-            that._nbconvert('html', true);
-        });
-        
-        this.element.find('#download_markdown').click(function () {
-            that._nbconvert('markdown', true);
-        });
-        
-        this.element.find('#download_rst').click(function () {
-            that._nbconvert('rst', true);
-        });
-        
-        this.element.find('#download_pdf').click(function () {
-            that._nbconvert('pdf', true);
-        });
-        
-        this.element.find('#download_script').click(function () {
-            that._nbconvert('script', true);
-        });
-
-
         this.events.on('trust_changed.Notebook', function (event, trusted) {
             if (trusted) {
                 that.element.find('#trust_notebook')
