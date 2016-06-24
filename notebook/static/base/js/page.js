@@ -54,7 +54,9 @@ define([
 
     Page.prototype._resize_site = function() {
         // Update the site's size.
-        $('div#site').height($(window).height() - $('#header').height());
+        if (!window.short_version) {
+           $('div#site').height($(window).height() - $('#header').height()); 
+        }
     };
 
     return {'Page': Page};

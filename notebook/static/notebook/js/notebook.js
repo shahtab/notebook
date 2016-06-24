@@ -166,6 +166,14 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
     };
 
 
+    var sendHeight = function () {
+        var height = window.scrollHeight
+            || document.documentElement.scrollHeight
+            || document.body.scrollHeight
+            || document.documentElement.scrollHeight;
+        window.parent.postMessage({"height": height}, '*');
+    };
+
     Notebook.options_default = {
         // can be any cell type, or the special values of
         // 'above', 'below', or 'selected' to get the value from another cell.
@@ -396,7 +404,10 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
      * Send custom JQuery event to parent window if exists
      */
     Notebook.prototype.send_outer_event = function(eventName, dataArray) {
-       parent.$(parent.document).trigger(eventName, dataArray);
+        if (window.short_version) {
+           sendHeight();
+           parent.$(parent.document).trigger(eventName, dataArray);
+        }
     };
 
     /**
