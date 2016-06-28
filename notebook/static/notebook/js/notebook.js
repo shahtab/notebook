@@ -213,13 +213,17 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         //for files drag and drop from parent window
 
         $(document).mouseup(function (e) {
-            console.log('mouseup in frame');
-            console.log(e.target);
-            if (file_path) {
+            var target_element = $(e.target);
+            var is_correct_target = target_element.hasClass('CodeMirror-line')
+                || target_element.find('.CodeMirror-line').length > 0;
+
+            if (file_path && is_correct_target) {
                 var to_add = file_path;
+                //to select cell
                 $(e.target).trigger('click');
+                //stop drag event, originating in main window
                 parent.$(parent.document).trigger(e);
-                // that.focus_cell();
+                //after click in target, target cell is available
                 var target_cell = that.get_selected_cell();
                 var initial_content = target_cell.get_text();
                 target_cell.unrender();
@@ -231,6 +235,9 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
                 target_cell.render();
                 target_cell.refresh();
                 that.set_dirty(true);
+            } else {
+               //need to notify parent window anyway
+               parent.$(parent.document).trigger(e);
             }
         });
 
