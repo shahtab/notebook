@@ -223,7 +223,11 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
                 var target_cell = that.get_selected_cell();
                 var initial_content = target_cell.get_text();
                 target_cell.unrender();
-                target_cell.set_text(to_add + '\n' + initial_content);
+                var result = to_add;
+                if (initial_content) {
+                    result = result + '\n' + initial_content;
+                }
+                target_cell.set_text(result);
                 target_cell.render();
                 target_cell.refresh();
                 that.set_dirty(true);
