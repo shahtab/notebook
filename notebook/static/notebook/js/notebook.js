@@ -174,6 +174,17 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         window.parent.postMessage({"height": height}, '*');
     };
 
+    if (window.short_version) {
+        //for files drag and drop from parent window
+        $(document).mouseup(function (e) {
+            console.log('mouseup in frame');
+            console.log(e.target);
+            parent.$(parent.document).trigger(e);
+        });
+    }
+
+
+
     Notebook.options_default = {
         // can be any cell type, or the special values of
         // 'above', 'below', or 'selected' to get the value from another cell.
