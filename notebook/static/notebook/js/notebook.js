@@ -176,32 +176,6 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
 
     var file_path = null;
 
-    if (window.short_version) {
-        //for files drag and drop from parent window
-
-        $(document).mouseup(function (e) {
-            console.log('mouseup in frame');
-            console.log(e.target);
-            if (file_path) {
-              $(e.target).trigger('click');
-            parent.$(parent.document).trigger(e);
-                file_path = null;
-            }
-        });
-
-        $('body').on('outer.dragStarted', function(e, data) {
-           console.log('Received: ' + data);
-            file_path = data;
-        });
-
-        $('body').on('outer.dropped', function() {
-            console.log('got drap stopped');
-           file_path = null;
-        });
-    }
-
-
-
     Notebook.options_default = {
         // can be any cell type, or the special values of
         // 'above', 'below', or 'selected' to get the value from another cell.
@@ -235,6 +209,35 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
     Notebook.prototype.bind_events = function () {
         var that = this;
 
+        if (window.short_version) {
+        //for files drag and drop from parent window
+
+        $(document).mouseup(function (e) {
+            console.log('mouseup in frame');
+            console.log(e.target);
+            if (file_path) {
+                var to_add = file_path;
+                $(e.target).trigger('click');
+                parent.$(parent.document).trigger(e);
+                // that.focus_cell();
+                var target_cell = that.get_selected_cell();
+                var initial_content = target_cell.get_text();
+                target_cell.unrender();
+                target_cell.set_text(to_add + '\n' + initial_content);
+                target_cell.render();
+                target_cell.refresh();
+                that.set_dirty(true);
+            }
+        });
+
+        $('body').on('outer.dragStarted', function(e, data) {
+            file_path = data;
+        });
+
+        $('body').on('outer.dropped', function() {
+           file_path = null;
+        });
+    }
 
         this.events.on('set_next_input.Notebook', function (event, data) {
             if (data.replace) {
