@@ -174,12 +174,29 @@ import {ShortcutEditor} from 'notebook/js/shortcuteditor';
         window.parent.postMessage({"height": height}, '*');
     };
 
+    var file_path = null;
+
     if (window.short_version) {
         //for files drag and drop from parent window
+
         $(document).mouseup(function (e) {
             console.log('mouseup in frame');
             console.log(e.target);
+            if (file_path) {
+              $(e.target).trigger('click');
             parent.$(parent.document).trigger(e);
+                file_path = null;
+            }
+        });
+
+        $('body').on('outer.dragStarted', function(e, data) {
+           console.log('Received: ' + data);
+            file_path = data;
+        });
+
+        $('body').on('outer.dropped', function() {
+            console.log('got drap stopped');
+           file_path = null;
         });
     }
 
