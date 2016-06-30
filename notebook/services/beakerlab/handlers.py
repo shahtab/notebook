@@ -207,6 +207,6 @@ _uuid_regex = r"(?P<container_uuid>[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-
 
 default_handlers = [
     (r"beakerlab/api/sessions%s" % path_regex, BeakerLabSessionHandler),
-    (r"%s/status" % _uuid_regex, BeakerLabStatusHandler),
+    (r"status" , BeakerLabStatusHandler),
     (r"beakerlab/api/contents%s" % path_regex, BeakerLabContentsHandler)
 ]
