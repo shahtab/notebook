@@ -192,7 +192,7 @@ class BeakerLabStatusHandler(APIHandler):
     @json_errors
     @gen.coroutine
     def get(self):
-        model = {"container_uuid": "jupyter"}
+        model = {"container_uuid": "jupyter", "result": "ok", "message": ""}
         self.set_status(200)
         self.finish(json.dumps(model, default=date_default))
 
